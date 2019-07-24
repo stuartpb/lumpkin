@@ -1,6 +1,6 @@
 const csvParse = require('csv-parse');
 const fs = require('fs');
-const mergeOptions = require('merge-options');
+const merge = require('lodash.merge');
 const Bottleneck = require('bottleneck');
 const nodemailer = require('nodemailer');
 
@@ -27,7 +27,7 @@ module.exports = function lumpkin(options) {
   columnNames.email = columnNames.email || "Email";
 
   const transport = nodemailer.createTransport(options.smtp,
-    mergeOptions(options.message, {
+    merge({}, options.message, {
       from: options.from,
       subject: options.subject,
       html: options.html,
@@ -46,7 +46,7 @@ module.exports = function lumpkin(options) {
   }
 
   // note that bottleneck options take precedence over our short options here
-  const limiter = new Bottleneck(mergeOptions({
+  const limiter = new Bottleneck(merge({
     maxConcurrent: options.parallel || 1,
     minTime: options.pause
   }, options.bottleneck));
@@ -54,7 +54,7 @@ module.exports = function lumpkin(options) {
   const jobs = [];
 
   fs.createReadStream(options.recipients)
-    .pipe(csvParse(mergeOptions(
+    .pipe(csvParse(merge(
       {columns: Array.isArray(options.columns) ? options.columns : true},
       // this allows options.csv.columns to list an array mapping,
       // and options.columns to list an object mapping

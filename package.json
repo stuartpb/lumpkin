@@ -28,7 +28,7 @@
     "csv-parse": "^4.4.3",
     "envigor": "^0.10.0",
     "grarg": "^1.0.1",
-    "merge-options": "^1.0.1",
+    "lodash.merge": "^4.6.2",
     "nodemailer": "^6.3.0",
     "yaml": "^1.6.0"
   }
