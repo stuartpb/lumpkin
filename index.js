@@ -2,8 +2,11 @@ const csvParse = require('csv-parse');
 const fs = require('fs');
 const mergeOptions = require('merge-options');
 const Bottleneck = require('bottleneck');
+const nodemailer = require('nodemailer');
 
 module.exports = function lumpkin(options) {
+  options.smtp = options.smtp || {};
+  options.smtp.auth = options.smtp.auth || {};
   if (options.user)
     options.smtp.auth.user = options.user;
   if (options.pass)
@@ -36,7 +39,7 @@ module.exports = function lumpkin(options) {
     const address = row[columnNames.email];
 
     console.log(`Sending message to ${name} (${address})...`)
-    return transporter.sendMail({to: {name, address}})
+    return transport.sendMail({to: {name, address}})
       // TODO: Handle possible partial rejections
       .then(info=>console.log(`Message delivered to ${address}`),
         err=>console.error(`Delivery failed to ${address}: ${err}`));
@@ -51,7 +54,7 @@ module.exports = function lumpkin(options) {
   const jobs = [];
 
   fs.createReadStream(options.recipients)
-    .pipe(parse(mergeOptions(
+    .pipe(csvParse(mergeOptions(
       {columns: Array.isArray(options.columns) ? options.columns : true},
       // this allows options.csv.columns to list an array mapping,
       // and options.columns to list an object mapping
