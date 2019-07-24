@@ -29,8 +29,8 @@ grarg((arg, val) => {
       merge(opts, YAML.parse(val));
     } else if (arg == "columns") {
       opts.columns = YAML.parse(val);
-    } else if (arg == "html" || arg == "text") {
-      opts[arg] = readFileSync(val);
+    } else if (arg == "html" || arg == "text" || arg == "recipients") {
+      opts[arg] = {path: val};
     } else if (arg == "body") {
       opts.text = val;
     } else {

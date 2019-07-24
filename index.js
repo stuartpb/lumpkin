@@ -53,7 +53,7 @@ module.exports = function lumpkin(options) {
 
   const jobs = [];
 
-  fs.createReadStream(options.recipients)
+  fs.createReadStream(options.recipients.path)
     .pipe(csvParse(merge(
       {columns: Array.isArray(options.columns) ? options.columns : true},
       // this allows options.csv.columns to list an array mapping,
