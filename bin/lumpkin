@@ -1,0 +1,54 @@
+#! /usr/bin/env node
+const grarg = require('grarg');
+const lumpkin = require('../index.js');
+const readFileSync = require('fs').readFileSync;
+const mergeOptions = require('merge-options');
+const YAML = require('yaml');
+
+const opts = require('envigor')();
+
+for (let name of Object.keys(process.env)) {
+  if (name.slice(0,8) == 'LUMPKIN_') {
+    opts[name.slice(8).toLowerCase()] = process.env[name];
+  }
+}
+
+// somewhat ugly hack for environment-variable-specified columns
+if (opts.columns) opts.columns = YAML.parse(opts.columns);
+
+function die(err) {
+  console.error(err);
+  process.exit(1);
+}
+
+grarg((arg, val) => {
+  if (arg && val) {
+    if (arg == "use") {
+      mergeOptions(opts, YAML.parse(readFileSync(val)));
+    } else if (arg == "yaml" || arg == "json") {
+      mergeOptions(opts, YAML.parse(val));
+    } else if (arg == "columns") {
+      opts.columns = YAML.parse(val);
+    } else if (arg == "html" || arg == "text") {
+      opts[arg] = readFileSync(val);
+    } else if (arg == "body") {
+      opts.text = val;
+    } else {
+      opts[arg] = val;
+    }
+  } else if (arg == "secure") {
+    if (val) {
+      die(`No context for ${JSON.stringify(val)}`);
+    } else {
+      opts[arg] = true;
+    }
+  } else {
+    if (arg) {
+      die(`No value specified for ${JSON.stringify(arg)}`);
+    } else {
+      die(`No context for ${JSON.stringify(val)}`);
+    }
+  }
+});
+
+lumpkin(opts);
