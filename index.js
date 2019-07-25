@@ -38,11 +38,11 @@ module.exports = function lumpkin(options) {
     const name = row[columnNames.name];
     const address = row[columnNames.email];
 
-    console.log(`Sending message to ${name} (${address})...`)
+    console.log(`${new Date().toISOString()} Sending message to ${name} (${address})...`)
     return transport.sendMail({to: {name, address}})
       // TODO: Handle possible partial rejections
-      .then(info=>console.log(`Message delivered to ${address}`),
-        err=>console.error(`Delivery failed to ${address}: ${err}`));
+      .then(info=>console.log(`${new Date().toISOString()} Message delivered to ${address}`),
+        err=>console.error(`${new Date().toISOString()} Delivery failed to ${address}: ${err}`));
   }
 
   // note that bottleneck options take precedence over our short options here
@@ -61,5 +61,5 @@ module.exports = function lumpkin(options) {
       options.csv)))
     .on('data', row => jobs.push(limiter.schedule(sendMailForRow, row)))
     .on('end', () => Promise.all(jobs).then(
-      () => console.log('All messages sent')));
+      () => console.log(`${new Date().toISOString()} All recipients processed`)));
 }
