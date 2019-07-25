@@ -38,11 +38,13 @@ module.exports = function lumpkin(options) {
     const name = row[columnNames.name];
     const address = row[columnNames.email];
 
-    console.log(`${new Date().toISOString()} Sending message to ${name} (${address})...`)
-    return transport.sendMail({to: {name, address}})
-      // TODO: Handle possible partial rejections
-      .then(info=>console.log(`${new Date().toISOString()} Message delivered to ${address}`),
-        err=>console.error(`${new Date().toISOString()} Delivery failed to ${address}: ${err}`));
+    if (address && /@/.test(address)) {
+      console.log(`${new Date().toISOString()} Sending message to ${name} (${address})...`)
+      return transport.sendMail({to: {name, address}})
+        // TODO: Handle possible partial rejections
+        .then(info=>console.log(`${new Date().toISOString()} Message delivered to ${address}`),
+          err=>console.error(`${new Date().toISOString()} Delivery failed to ${address}: ${err}`));
+    }
   }
 
   // note that bottleneck options take precedence over our short options here
