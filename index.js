@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 module.exports = function lumpkin(options) {
   options.smtp = options.smtp || {};
   options.smtp.auth = options.smtp.auth || {};
+
   if (options.user)
     options.smtp.auth.user = options.user;
   if (options.pass)
@@ -15,6 +16,9 @@ module.exports = function lumpkin(options) {
     options.smtp.service = options.service;
   if (options.secure !== undefined)
     options.smtp.secure = !!options.secure;
+
+  // for now, we'll just use Nodemailer's default pooling
+  options.smtp.pool = options.parallel > 1;
 
   // we assume passthrough names if columns are specified as an array
   const columnNames = Array.isArray(options.columns)
