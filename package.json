@@ -25,7 +25,7 @@
   "homepage": "https://github.com/stuartpb/lumpkin#readme",
   "dependencies": {
     "bottleneck": "^2.19.4",
-    "csv-parse": "^4.4.3",
+    "csv-parse": "^4.4.6",
     "envigor": "^0.10.0",
     "grarg": "^1.0.1",
     "lodash.merge": "^4.6.2",
