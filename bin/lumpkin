@@ -15,6 +15,7 @@ for (let name of Object.keys(process.env)) {
 
 // somewhat ugly hack for environment-variable-specified columns
 if (opts.columns) opts.columns = YAML.parse(opts.columns);
+// TODO: Shouldn't opts.secure be parsed for falsiness here, too?
 
 function die(err) {
   console.error(err);
@@ -22,29 +23,57 @@ function die(err) {
 }
 
 grarg((arg, val) => {
-  if (arg && val) {
-    if (arg == "use") {
+  // KV arg handling
+  if (arg && val) switch (arg) {
+
+    // Config files
+    case "use":
       merge(opts, YAML.parse(readFileSync(val,'utf8')));
-    } else if (arg == "yaml" || arg == "json") {
+      break;
+
+    // Explicit YAML
+    case "yaml":
+    case "json":
       merge(opts, YAML.parse(val));
-    } else if (arg == "columns") {
+      break;
+
+    // Special YAML values
+    case "columns":
       opts.columns = YAML.parse(val);
-    } else if (arg == "html" || arg == "text" || arg == "recipients") {
+      break;
+
+    // Special file values
+    case "html":
+    case "text":
+    case "recipients":
       opts[arg] = {path: val};
-    } else if (arg == "body") {
+      break;
+
+    // Special string values
+    case "body":
       opts.text = val;
-    } else {
-      opts[arg] = val;
-    }
-  } else if (arg == "secure") {
-    if (val) {
+      break;
+
+    // fail boolean args with values
+    case "secure":
       die(`No context for ${JSON.stringify(val)}`);
-    } else {
-      opts[arg] = true;
-    }
+      break;
+
+    // Default KV args
+    default:
+      opts[arg] = val;
+      break;
+
+  // Normal boolean args
+  } else if (arg == "secure") {
+    opts[arg] = true;
+
+  // Unrecognized args
   } else {
     if (arg) {
       die(`No value specified for ${JSON.stringify(arg)}`);
+
+    // TODO: Use last "modal" argument as context for bare values
     } else {
       die(`No context for ${JSON.stringify(val)}`);
     }

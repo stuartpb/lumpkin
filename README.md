@@ -4,7 +4,7 @@ A command-line bulk mailer.
 
 ## Base options
 
-Every base option to Lumpkin can be defined as either a
+Every base option to Lumpkin can be defined as either a command-line argument or an environment variable.
 
 Most of these short options are aliases/overrides for deeper options:
 
