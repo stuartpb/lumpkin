@@ -29,7 +29,7 @@
     "envigor": "^0.10.0",
     "grarg": "^1.0.1",
     "lodash.merge": "^4.6.2",
-    "nodemailer": "^6.3.0",
+    "nodemailer": "^6.4.16",
     "yaml": "^1.6.0"
   }
 }
